@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+struct Task: Identifiable, Codable {
+    var id = UUID()  // タスクを区別するための番号
+    var taskItem: String  // タスクの内容
+}
+
 struct ContentView: View {
     var body: some View {
         FirstView()//FirstViewを表示
@@ -44,6 +49,17 @@ struct FirstView: View {
                 ForEach(tasksArray){ task in
                     Text(task.taskItem)
                 }
+               
+                // スワイプで削除
+                .onDelete(perform: deleteTask)
+                
+                // 削除する関数を作る
+                func deleteTask(at offsets: IndexSet) {
+                    tasksArray.remove(atOffsets: offsets) // 指定されたタスクを削除
+                    saveTasks() //削除後にデータを保存
+                }
+                
+                
                 //並び替えが起きた時に実行される
                 
                 .onMove{ from, to in
@@ -52,6 +68,9 @@ struct FirstView: View {
                     
                     
                 }
+                
+               
+                
                 
             }
                 .navigationTitle("Task List")//画面上のタイトル
