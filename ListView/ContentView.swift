@@ -50,8 +50,14 @@ struct FirstView: View {
 
     // タスク削除処理（スワイプ or 編集モードで削除）
     func deleteTask(at offsets: IndexSet) {
+        var array = tasksArray
         tasksArray.remove(atOffsets: offsets)
         saveTasks() // 削除後にデータを保存
+        
+        // エンコードが成功した場合のみ保存＆更新
+            if let encodedData = try? JSONEncoder().encode(array) {
+                tasksData = encodedData
+                tasksArray = array // 成功した場合のみ `tasksArray` を更新
     }
 
     // 並び替え処理（並び替えた後にデータを保存）
@@ -107,8 +113,22 @@ struct SecondView: View {
         if !newTask.isEmpty {
             let task = Task(taskItem: newTask)
             tasksArray.append(task) // tasksArray に追加
+            
+            
+            func deleteTask(at offsets: IndexSet) {
+                var array = tasksArray
+                array.remove(atOffsets: offsets) // 削除処理を実行
+
+                if let encodedData = try? JSONEncoder().encode(array) { //  エンコードが成功した場合のみ更新
+                    tasksData = encodedData
+                    tasksArray = array
+                }
+            }
+
+            
             saveTasks() // UserDefaults にデータを保存
             dismiss() // 画面を閉じる
+                       
         }
     }
 }
