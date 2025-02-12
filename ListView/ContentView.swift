@@ -8,10 +8,7 @@
 import SwiftUI
 
 // Task 構造体（タスクのデータモデル）
-struct Task: Identifiable, Codable {
-    var id = UUID()  // タスクを区別するための番号
-    var taskItem: String  // タスクの内容
-}
+
 
 struct ContentView: View {
     var body: some View {
@@ -27,7 +24,7 @@ struct FirstView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                NavigationLink(destination: SecondView(tasksArray: $tasksArray, saveTasks: saveTasks)) { //  修正: `saveTasks` を渡す
+                NavigationLink(destination: SecondView(tasksArray: $tasksArray, saveTasks: saveTasks)) { //  修正: saveTasks を渡す
                     Text("Add New Task")
                         .font(.system(size: 20, weight: .bold))
                         .padding()
@@ -63,14 +60,14 @@ struct FirstView: View {
         saveTasks() // 並び替え後にデータを保存
     }
 
-    // データを `UserDefaults` に保存（SecondView でも使えるように `func saveTasks()` を渡す）
+    // データを UserDefaults に保存（SecondView でも使えるように func saveTasks() を渡す）
     func saveTasks() {
         if let encodedArray = try? JSONEncoder().encode(tasksArray) {
             tasksData = encodedArray
         }
     }
 
-    // データを `UserDefaults` から読み込む
+    // データを UserDefaults から読み込む
     func loadTasks() {
         if let decodedTasks = try? JSONDecoder().decode([Task].self, from: tasksData) {
             tasksArray = decodedTasks
@@ -83,7 +80,7 @@ struct SecondView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var task: String = ""
     @Binding var tasksArray: [Task] // タスクを受け取る
-    var saveTasks: () -> Void // 修正: `saveTasks` を FirstView から受け取る
+    var saveTasks: () -> Void // 修正: saveTasks を FirstView から受け取る
 
     var body: some View {
         VStack {
@@ -109,8 +106,8 @@ struct SecondView: View {
     func addTask(newTask: String) {
         if !newTask.isEmpty {
             let task = Task(taskItem: newTask)
-            tasksArray.append(task) // `tasksArray` に追加
-            saveTasks() // `UserDefaults` にデータを保存
+            tasksArray.append(task) // tasksArray に追加
+            saveTasks() // UserDefaults にデータを保存
             dismiss() // 画面を閉じる
         }
     }
@@ -120,4 +117,3 @@ struct SecondView: View {
 #Preview {
     ContentView()
 }
-
