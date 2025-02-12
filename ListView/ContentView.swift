@@ -13,8 +13,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         FirstView() // FirstView を表示
-    }
-}
+    
 
 // FirstView（タスクリストの画面）
 struct FirstView: View {
@@ -48,43 +47,45 @@ struct FirstView: View {
                     .onAppear(perform: loadTasks) // アプリ起動時にデータをロード
                 }
                 
+            }//VStack
+        }//NavigationStack
+    }//var body
                 // タスク削除処理（スワイプ or 編集モードで削除）
                 func deleteTask(at offsets: IndexSet) {
                     var array = tasksArray
                     tasksArray.remove(atOffsets: offsets)
                     saveTasks() // 削除後にデータを保存
+                }
+                
+                
+                // 並び替え処理（並び替えた後にデータを保存）
+                func replaceRow(_ from: IndexSet, _ to: Int) {
+                    tasksArray.move(fromOffsets: from, toOffset: to)
+                    saveTasks() // 並び替え後にデータを保存
                     
-                    // 並び替え処理（並び替えた後にデータを保存）
-                    func replaceRow(_ from: IndexSet, _ to: Int) {
-                        tasksArray.move(fromOffsets: from, toOffset: to)
-                        saveTasks() // 並び替え後にデータを保存
-                    }
                     
                     // エンコードが成功した場合のみ保存＆更新
                     if let encodedData = try? JSONEncoder().encode(array) {
                         tasksData = encodedData
                         tasksArray = array // 成功した場合のみ `tasksArray` を更新
                     }
-                    
-                    
-                    
-                    // データを UserDefaults に保存（SecondView でも使えるように func saveTasks() を渡す）
-                    func saveTasks() {
-                        if let encodedArray = try? JSONEncoder().encode(tasksArray) {
-                            tasksData = encodedArray
-                        }
-                    }
-                    
-                    // データを UserDefaults から読み込む
-                    func loadTasks() {
-                        if let decodedTasks = try? JSONDecoder().decode([Task].self, from: tasksData) {
-                            tasksArray = decodedTasks
-                        }
+                }
+                
+                
+                
+                // データを UserDefaults に保存（SecondView でも使えるように func saveTasks() を渡す）
+                func saveTasks() {
+                    if let encodedArray = try? JSONEncoder().encode(tasksArray) {
+                        tasksData = encodedArray
                     }
                 }
-            }
-        }
-    }
+                
+                // データを UserDefaults から読み込む
+                func loadTasks() {
+                    if let decodedTasks = try? JSONDecoder().decode([Task].self, from: tasksData) {
+                        tasksArray = decodedTasks
+                    }
+                }
 }
             
             // SecondView（タスクを追加する画面）
@@ -99,6 +100,7 @@ struct FirstView: View {
                         TextField("タスクを入力してください", text: $task)
                             .textFieldStyle(.roundedBorder)
                             .padding()
+                    }
                         
                         Button {
                             addTask(newTask: task) // タスクを追加
@@ -111,7 +113,7 @@ struct FirstView: View {
                         .padding()
                         
                         Spacer()
-                    }
+                    
                 }
                 
                 // タスク追加処理
