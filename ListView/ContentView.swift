@@ -75,6 +75,14 @@ struct FirstView: View {
             }
                 .navigationTitle("Task List")//画面上のタイトル
             
+            
+            // 編集ボタンをつける
+            toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    EditButton()
+                }
+            }
+            
             //ナビゲーションバーに編集ボタンを追加
             .toolbar(content: {
                            EditButton()
