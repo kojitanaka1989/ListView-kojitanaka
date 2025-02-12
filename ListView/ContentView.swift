@@ -28,115 +28,119 @@ struct FirstView: View {
                     Text("Add New Task")
                         .font(.system(size: 20, weight: .bold))
                         .padding()
-                
-                
-                List {
-                    ForEach(tasksArray) { task in
-                        Text(task.taskItem)
+                    
+                    
+                    List {
+                        ForEach(tasksArray) { task in
+                            Text(task.taskItem)
+                        }
+                        .onDelete(perform: deleteTask) // スワイプで削除
+                        .onMove(perform: replaceRow)  // 並び替え
+                        
+                        .navigationTitle("Task List")
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                EditButton() // 編集モードボタン
+                            }
+                            
+                        }
                     }
-                    .onDelete(perform: deleteTask) // スワイプで削除
-                    .onMove(perform: replaceRow)  // 並び替え
-                
-                .navigationTitle("Task List")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        EditButton() // 編集モードボタン
-                    }
-                
-            }
-        }
-        .onAppear(perform: loadTasks) // アプリ起動時にデータをロード
-    }
-    
-    // タスク削除処理（スワイプ or 編集モードで削除）
-    func deleteTask(at offsets: IndexSet) {
-        var array = tasksArray
-        tasksArray.remove(atOffsets: offsets)
-        saveTasks() // 削除後にデータを保存
-        
-        // 並び替え処理（並び替えた後にデータを保存）
-        func replaceRow(_ from: IndexSet, _ to: Int) {
-            tasksArray.move(fromOffsets: from, toOffset: to)
-            saveTasks() // 並び替え後にデータを保存
-        }
-        
-        // エンコードが成功した場合のみ保存＆更新
-        if let encodedData = try? JSONEncoder().encode(array) {
-            tasksData = encodedData
-            tasksArray = array // 成功した場合のみ `tasksArray` を更新
-        }
-        
-       
-        
-        // データを UserDefaults に保存（SecondView でも使えるように func saveTasks() を渡す）
-        func saveTasks() {
-            if let encodedArray = try? JSONEncoder().encode(tasksArray) {
-                tasksData = encodedArray
-            }
-        }
-        
-        // データを UserDefaults から読み込む
-        func loadTasks() {
-            if let decodedTasks = try? JSONDecoder().decode([Task].self, from: tasksData) {
-                tasksArray = decodedTasks
-            }
-        }
-    }
-    
-    // SecondView（タスクを追加する画面）
-    struct SecondView: View {
-        @Environment(\.dismiss) private var dismiss
-        @State private var task: String = ""
-        @Binding var tasksArray: [Task] // タスクを受け取る
-        var saveTasks: () -> Void // 修正: saveTasks を FirstView から受け取る
-        
-        var body: some View {
-            VStack {
-                TextField("タスクを入力してください", text: $task)
-                    .textFieldStyle(.roundedBorder)
-                    .padding()
-                
-                Button {
-                    addTask(newTask: task) // タスクを追加
-                    task = "" // 入力欄をクリア
-                } label: {
-                    Text("Add")
+                    .onAppear(perform: loadTasks) // アプリ起動時にデータをロード
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.orange)
-                .padding()
                 
-                Spacer()
-            }
-        }
-        
-        // タスク追加処理
-        func addTask(newTask: String) {
-            if !newTask.isEmpty {
-                let task = Task(taskItem: newTask)
-                tasksArray.append(task) // tasksArray に追加
-                
-                
+                // タスク削除処理（スワイプ or 編集モードで削除）
                 func deleteTask(at offsets: IndexSet) {
                     var array = tasksArray
-                    array.remove(atOffsets: offsets) // 削除処理を実行
+                    tasksArray.remove(atOffsets: offsets)
+                    saveTasks() // 削除後にデータを保存
                     
-                    if let encodedData = try? JSONEncoder().encode(array) { //  エンコードが成功した場合のみ更新
+                    // 並び替え処理（並び替えた後にデータを保存）
+                    func replaceRow(_ from: IndexSet, _ to: Int) {
+                        tasksArray.move(fromOffsets: from, toOffset: to)
+                        saveTasks() // 並び替え後にデータを保存
+                    }
+                    
+                    // エンコードが成功した場合のみ保存＆更新
+                    if let encodedData = try? JSONEncoder().encode(array) {
                         tasksData = encodedData
-                        tasksArray = array
+                        tasksArray = array // 成功した場合のみ `tasksArray` を更新
+                    }
+                    
+                    
+                    
+                    // データを UserDefaults に保存（SecondView でも使えるように func saveTasks() を渡す）
+                    func saveTasks() {
+                        if let encodedArray = try? JSONEncoder().encode(tasksArray) {
+                            tasksData = encodedArray
+                        }
+                    }
+                    
+                    // データを UserDefaults から読み込む
+                    func loadTasks() {
+                        if let decodedTasks = try? JSONDecoder().decode([Task].self, from: tasksData) {
+                            tasksArray = decodedTasks
+                        }
                     }
                 }
-                
-                
-                saveTasks() // UserDefaults にデータを保存
-                dismiss() // 画面を閉じる
-                
             }
         }
     }
-    
-    // プレビュー用
-    #Preview {
-        ContentView()
-    }
 }
+            
+            // SecondView（タスクを追加する画面）
+            struct SecondView: View {
+                @Environment(\.dismiss) private var dismiss
+                @State private var task: String = ""
+                @Binding var tasksArray: [Task] // タスクを受け取る
+                var saveTasks: () -> Void // 修正: saveTasks を FirstView から受け取る
+                
+                var body: some View {
+                    VStack {
+                        TextField("タスクを入力してください", text: $task)
+                            .textFieldStyle(.roundedBorder)
+                            .padding()
+                        
+                        Button {
+                            addTask(newTask: task) // タスクを追加
+                            task = "" // 入力欄をクリア
+                        } label: {
+                            Text("Add")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.orange)
+                        .padding()
+                        
+                        Spacer()
+                    }
+                }
+                
+                // タスク追加処理
+                func addTask(newTask: String) {
+                    if !newTask.isEmpty {
+                        let task = Task(taskItem: newTask)
+                        tasksArray.append(task) // tasksArray に追加
+                        
+                        
+                        func deleteTask(at offsets: IndexSet) {
+                            var array = tasksArray
+                            array.remove(atOffsets: offsets) // 削除処理を実行
+                        }
+                        if let encodedData = try? JSONEncoder().encode(array) { //  エンコードが成功した場合のみ更新
+                            tasksData = encodedData
+                            tasksArray = array
+                        }
+                    }
+                    
+                    
+                    saveTasks() // UserDefaults にデータを保存
+                    dismiss() // 画面を閉じる
+                    
+                }
+            }
+        // プレビュー用
+        #Preview {
+            ContentView()
+        }
+        
+   
+
