@@ -58,21 +58,26 @@ struct ContentView: View {
                 saveTasks() // 削除後にデータを保存
             }
             
-            
-            // 並び替え処理（並び替えた後にデータを保存）
             func replaceRow(_ from: IndexSet, _ to: Int) {
-                tasksArray.move(fromOffsets: from, toOffset: to)
-                saveTasks() // 並び替え後にデータを保存
+                   tasksArray.move(fromOffsets: from, toOffset: to) // 配列内での並び替え
+                   if let encodedArray = try? JSONEncoder().encode(tasksArray) {
+                       tasksData = encodedArray // エンコードできたらAppStorageに渡す(保存・更新)
+                   }
+               }
+            // 並び替え処理（並び替えた後にデータを保存）
+       //     func replaceRow(_ from: IndexSet, _ to: Int) {
+         //       tasksArray.move(fromOffsets: from, toOffset: to)
+           //     saveTasks() // 並び替え後にデータを保存
                 
                 
                 // エンコードが成功した場合のみ保存＆更新
         
-               if let encodedData = try? JSONEncoder(array).encode() {
-                   tasksData = encodedData
-           tasksArray = array // 成功した場合のみ `tasksArray` を更新
+             //  if let encodedData = try? JSONEncoder(array).encode() {
+//                   tasksData = encodedData
+//           tasksArray = array // 成功した場合のみ `tasksArray` を更新
                
-                }
-            }
+//                }
+//            }
             
             
             
