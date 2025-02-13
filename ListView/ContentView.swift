@@ -42,16 +42,20 @@ struct ContentView: View {
                                     }
                                     
                                 }
+                    .navigationTitle("Task List")
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            EditButton() // 編集モードボタン
+                    
+                
+                    
                             }
-                            .navigationTitle("Task List")
-                            .toolbar {
-                                ToolbarItem(placement: .navigationBarLeading) {
-                                    EditButton() // 編集モードボタン
-                            .onAppear(perform: loadTasks) // アプリ起動時にデータをロード
-                        
+                            
                        
                         
                     }//VStack
+                    
+                    .onAppear(perform: loadTasks) // アプリ起動時にデータをロード
                 }//NavigationStack
             }//var body
             // タスク削除処理（スワイプ or 編集モードで削除）
