@@ -55,11 +55,12 @@ struct ContentView: View {
             func deleteTask(at offsets: IndexSet) {
             
                 var array = tasksArray
-                tasksArray.remove(atOffsets: offsets)
-                saveTasks() // 削除後にデータを保存
+                array.remove(atOffsets: offsets)
+          //消去予定      saveTasks() // 削除後にデータを保存
                 
-                if let encodedArray = try? JSONEncoder().encode(tasksArray) {
+                if let encodedArray = try? JSONEncoder().encode(array) {
                     tasksData = encodedArray // エンコードできたらAppStorageに渡す(保存・更新)
+                    tasksArray = array
                 }
                 
                 
@@ -140,10 +141,10 @@ struct SecondView: View {
         // 保存した内容と画面が合わなくなってしまうので、
         // tasksArrayを直接書き換えないように
         // 一時的な作業用の変数にtasksArrayをコピーする
-        var array = tasksArray
+      var array = tasksArray
+        tasksArray.append(task) // 直接 tasksArray に追加
         // 作業用の変数を操作。ここではタスクを追加する
-        array.append(task)
-        
+       array.append(task)
         // 操作した内容をData型に変換し、変換が成功したかチェックする
         if let encodeData = try? JSONEncoder().encode(array) {
             
