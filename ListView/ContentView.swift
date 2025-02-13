@@ -29,6 +29,7 @@ struct ContentView: View {
                                 .font(.system(size: 20, weight: .bold))
                                 .padding()
                             
+                        }
                             
                             List {
                                 ForEach(tasksArray) { task in
@@ -46,7 +47,8 @@ struct ContentView: View {
                                 }
                             }
                             .onAppear(perform: loadTasks) // アプリ起動時にデータをロード
-                        }
+                        
+                       
                         
                     }//VStack
                 }//NavigationStack
