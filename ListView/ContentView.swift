@@ -53,9 +53,16 @@ struct ContentView: View {
             }//var body
             // タスク削除処理（スワイプ or 編集モードで削除）
             func deleteTask(at offsets: IndexSet) {
+            
                 var array = tasksArray
                 tasksArray.remove(atOffsets: offsets)
                 saveTasks() // 削除後にデータを保存
+                
+                if let encodedArray = try? JSONEncoder().encode(tasksArray) {
+                    tasksData = encodedArray // エンコードできたらAppStorageに渡す(保存・更新)
+                }
+                
+                
             }
             
             func replaceRow(_ from: IndexSet, _ to: Int) {
