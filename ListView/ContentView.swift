@@ -92,58 +92,60 @@ struct ContentView: View {
         }
         
         // SecondView（タスクを追加する画面）
-        struct SecondView: View {
-            @Environment(\.dismiss) private var dismiss
-            @State private var task: String = ""
-            @Binding var tasksArray: [Task] // タスクを受け取る
-            var saveTasks: () -> Void // 修正: saveTasks を FirstView から受け取る
-            
-            var body: some View {
-                VStack {
-                    TextField("タスクを入力してください", text: $task)
-                        .textFieldStyle(.roundedBorder)
-                        .padding()
-                }
-                
-                Button {
-                    addTask(newTask: task) // タスクを追加
-                    task = "" // 入力欄をクリア
-                } label: {
-                    Text("Add")
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.orange)
+struct SecondView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var task: String = ""
+    @Binding var tasksArray: [Task] // タスクを受け取る
+    var saveTasks: () -> Void // 修正: saveTasks を FirstView から受け取る
+    
+    var body: some View {
+        VStack {
+            TextField("タスクを入力してください", text: $task)
+                .textFieldStyle(.roundedBorder)
                 .padding()
-                
-                Spacer()
-                
-            }
+        }
+        
+        Button {
+            addTask(newTask: task) // タスクを追加
+            task = "" // 入力欄をクリア
+        } label: {
+            Text("Add")
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(.orange)
+        .padding()
+        
+        Spacer()
+        
+    }
+    
+    func addTask(newTask: String) {
+        if newTask.isEmpty { return }
+        
+        let task = Task(taskItem: newTask)
+        
+        // ここでtasksArrayを変更してしまうと、エラーが起きたときに
+        // 保存した内容と画面が合わなくなってしまうので、
+        // tasksArrayを直接書き換えないように
+        // 一時的な作業用の変数にtasksArrayをコピーする
+        var array = tasksArray
+        // 作業用の変数を操作。ここではタスクを追加する
+        array.append(task)
+        
+        // 操作した内容をData型に変換し、変換が成功したかチェックする
+        if let encodeData = try? JSONEncoder().encode(array) {
             
-            func addTask(newTask: String) {
-                    if newTask.isEmpty { return }
-                    
-                    let task = Task(taskItem: newTask)
-
-                    // ここでtasksArrayを変更してしまうと、エラーが起きたときに
-                    // 保存した内容と画面が合わなくなってしまうので、
-                    // tasksArrayを直接書き換えないように
-                    // 一時的な作業用の変数にtasksArrayをコピーする
-                    var array = tasksArray
-                    // 作業用の変数を操作。ここではタスクを追加する
-                    array.append(task)
-                    
-                    // 操作した内容をData型に変換し、変換が成功したかチェックする
-                    if let encodeData = try? JSONEncoder().encode(array) {
-                        
-                        // 変換が成功した時だけUserDefautsにタスクのデータを保存する
-                        UserDefaults.standard.setValue(encodeData, forKey: "TaskData")
-                       
-                        // 変換が成功した時だけ画面内容を保持する変数tasksArrayを変更する
-                        tasksArray = array
-                        
-                        dismiss()
-                    }
-                }
+            // 変換が成功した時だけUserDefautsにタスクのデータを保存する
+            UserDefaults.standard.setValue(encodeData, forKey: "TaskData")
+            
+            // 変換が成功した時だけ画面内容を保持する変数tasksArrayを変更する
+            tasksArray = array
+            
+            dismiss()
+        }
+    }
+    
+}
             // タスク追加処理
 //            func addTask(newTask: String) {
 //                if !newTask.isEmpty {
@@ -174,5 +176,5 @@ struct ContentView: View {
         #Preview {
             ContentView()
         }
-    }
+
 
