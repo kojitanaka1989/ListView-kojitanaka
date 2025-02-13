@@ -13,6 +13,8 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         FirstView() // FirstView を表示
+    }
+    }
         
         // FirstView（タスクリストの画面）
         struct FirstView: View {
@@ -65,10 +67,10 @@ struct ContentView: View {
                 
                 // エンコードが成功した場合のみ保存＆更新
         
-                if let encodedData = try? JSONEncoder().encode(array) {
-                    tasksData = encodedData
-                    tasksArray = array // 成功した場合のみ `tasksArray` を更新
-                    
+               if let encodedData = try? JSONEncoder(array).encode() {
+                   tasksData = encodedData
+           tasksArray = array // 成功した場合のみ `tasksArray` を更新
+               
                 }
             }
             
@@ -128,7 +130,7 @@ struct ContentView: View {
                         var array = tasksArray
                         array.remove(atOffsets: offsets) // 削除処理を実行
                     }
-                    if let encodedData = try? JSONEncoder().encode(array) { //  エンコードが成功した場合のみ更新
+                  if let encodedData = try? JSONEncoder().encode(array) { //  エンコードが成功した場合のみ更新
                         tasksData = encodedData
                         tasksArray = array
                     }
@@ -148,5 +150,4 @@ struct ContentView: View {
             ContentView()
         }
     }
-}
 
