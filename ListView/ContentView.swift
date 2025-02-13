@@ -38,14 +38,15 @@ struct ContentView: View {
                                 .onDelete(perform: deleteTask) // スワイプで削除
                                 .onMove(perform: replaceRow)  // 並び替え
                                 
-                                .navigationTitle("Task List")
-                                .toolbar {
-                                    ToolbarItem(placement: .navigationBarLeading) {
-                                        EditButton() // 編集モードボタン
+                                
                                     }
                                     
                                 }
                             }
+                            .navigationTitle("Task List")
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarLeading) {
+                                    EditButton() // 編集モードボタン
                             .onAppear(perform: loadTasks) // アプリ起動時にデータをロード
                         
                        
@@ -151,7 +152,7 @@ struct SecondView: View {
         if let encodeData = try? JSONEncoder().encode(array) {
             
             // 変換が成功した時だけUserDefautsにタスクのデータを保存する
-            UserDefaults.standard.setValue(encodeData, forKey: "TaskData")
+            UserDefaults.standard.setValue(encodeData, forKey: "TasksData")
             
             // 変換が成功した時だけ画面内容を保持する変数tasksArrayを変更する
             tasksArray = array
