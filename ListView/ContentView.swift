@@ -119,29 +119,54 @@ struct ContentView: View {
                 
             }
             
-            // タスク追加処理
             func addTask(newTask: String) {
-                if !newTask.isEmpty {
+                    if newTask.isEmpty { return }
+                    
                     let task = Task(taskItem: newTask)
-                    tasksArray.append(task) // tasksArray に追加
+
+                    // ここでtasksArrayを変更してしまうと、エラーが起きたときに
+                    // 保存した内容と画面が合わなくなってしまうので、
+                    // tasksArrayを直接書き換えないように
+                    // 一時的な作業用の変数にtasksArrayをコピーする
+                    var array = tasksArray
+                    // 作業用の変数を操作。ここではタスクを追加する
+                    array.append(task)
                     
-                    
-                    func deleteTask(at offsets: IndexSet) {
-                        var array = tasksArray
-                        array.remove(atOffsets: offsets) // 削除処理を実行
-                    }
-                  if let encodedData = try? JSONEncoder().encode(array) { //  エンコードが成功した場合のみ更新
-                        tasksData = encodedData
+                    // 操作した内容をData型に変換し、変換が成功したかチェックする
+                    if let encodeData = try? JSONEncoder().encode(array) {
+                        
+                        // 変換が成功した時だけUserDefautsにタスクのデータを保存する
+                        UserDefaults.standard.setValue(encodeData, forKey: "TaskData")
+                       
+                        // 変換が成功した時だけ画面内容を保持する変数tasksArrayを変更する
                         tasksArray = array
+                        
+                        dismiss()
                     }
                 }
+            // タスク追加処理
+//            func addTask(newTask: String) {
+//                if !newTask.isEmpty {
+//                    let task = Task(taskItem: newTask)
+//                    tasksArray.append(task) // tasksArray に追加
+                    
+                    
+//                    func deleteTask(at offsets: IndexSet) {
+//                        var array = tasksArray
+//                        array.remove(atOffsets: offsets) // 削除処理を実行
+//                    }
+//                  if let encodedData = try? JSONEncoder().encode(array) { //  エンコードが成功した場合のみ更新
+//                        tasksData = encodedData
+//                        tasksArray = array
+//                    }
+//                }
                 
                 
-                saveTasks() // UserDefaults にデータを保存
-                dismiss() // 画面を閉じる
+//                saveTasks() // UserDefaults にデータを保存
+//                dismiss() // 画面を閉じる
                 
-            }
-        }
+//            }
+//        }
         
         
         
