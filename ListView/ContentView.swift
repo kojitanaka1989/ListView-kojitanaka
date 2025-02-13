@@ -149,7 +149,6 @@ struct SecondView: View {
         // tasksArrayを直接書き換えないように
         // 一時的な作業用の変数にtasksArrayをコピーする
       var array = tasksArray
-        tasksArray.append(task) // 直接 tasksArray に追加
         // 作業用の変数を操作。ここではタスクを追加する
        array.append(task)
         // 操作した内容をData型に変換し、変換が成功したかチェックする
